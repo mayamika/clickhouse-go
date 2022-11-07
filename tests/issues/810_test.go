@@ -2,7 +2,6 @@ package issues
 
 import (
 	"context"
-	"fmt"
 	"github.com/ClickHouse/clickhouse-go/v2"
 	clickhouse_tests "github.com/ClickHouse/clickhouse-go/v2/tests"
 	"github.com/stretchr/testify/require"
@@ -39,12 +38,16 @@ func TestReflectNullableString(t *testing.T) {
 	for i := range columnTypes {
 		vals[i] = reflect.New(columnTypes[i].ScanType()).Interface()
 	}
+	i := 0
 	for _, v := range vals {
 		switch v := v.(type) {
 		case *string:
-			fmt.Println(reflect.TypeOf(v).String())
+			i++
+			require.Equal(t, "*string", reflect.TypeOf(v).String())
 		case **string:
-			fmt.Println(reflect.TypeOf(v).String())
+			i++
+			require.Equal(t, "**string", reflect.TypeOf(v).String())
 		}
 	}
+	require.Equal(t, 2, i)
 }
